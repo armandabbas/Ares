@@ -1,7 +1,18 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, TrendingStock } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Safe initialization: Only create the AI client if an API key is provided.
+// This prevents the entire app from crashing on boot if the key is missing in production.
+const getAIClient = () => {
+  const apiKey = process.env.API_KEY || '';
+  if (!apiKey) {
+    console.warn("Ares: No API Key found. AI features will be disabled.");
+    return null;
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
+const ai = getAIClient();
 
 const ANALYSIS_SYSTEM_INSTRUCTION = `
 You are "Ares", a minimalist and highly intelligent short-selling assistant. 
@@ -103,6 +114,7 @@ const analysisSchema = {
 };
 
 export const analyzeTicker = async (ticker: string): Promise<AnalysisResult> => {
+  if (!ai) throw new Error("AI Service not configured. Please add your API_KEY to GitHub Secrets.");
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -132,6 +144,12 @@ export const analyzeTicker = async (ticker: string): Promise<AnalysisResult> => 
 };
 
 export const getTrendingShorts = async (): Promise<TrendingStock[]> => {
+  if (!ai) return [
+    { ticker: "CVNA", name: "Carvana", previewScore: 85, changePercent: 5.2 },
+    { ticker: "MARA", name: "Marathon Digital", previewScore: 72, changePercent: -2.1 },
+    { ticker: "BYND", name: "Beyond Meat", previewScore: 88, changePercent: 1.5 },
+    { ticker: "AMC", name: "AMC Ent.", previewScore: 92, changePercent: 8.4 },
+  ];
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-lite-latest',
