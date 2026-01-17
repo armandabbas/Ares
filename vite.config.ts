@@ -8,11 +8,14 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    // Explicit base for GitHub Pages
-    base: '/Ares/',
+    // Relative base is often most robust for GitHub Pages
+    base: './',
     define: {
-      // Safely stringify the API key, default to empty string to prevent ReferenceError
       'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
+      // Prevent "process is not defined" errors
+      'process.env': {
+        NODE_ENV: JSON.stringify(mode),
+      },
     },
   };
 });

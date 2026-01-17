@@ -7,12 +7,13 @@ import { AnalysisResult } from './types';
 import { analyzeTicker } from './services/geminiService';
 
 const App: React.FC = () => {
+  console.log("Ares: App rendering");
   const [view, setView] = useState<'HOME' | 'ANALYSIS'>('HOME');
   const [loading, setLoading] = useState(false);
   const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
-  
+
   // Initialize history from localStorage
   const [history, setHistory] = useState<AnalysisResult[]>(() => {
     try {
@@ -65,8 +66,8 @@ const App: React.FC = () => {
 
   return (
     <Layout onHome={goHome} onOpenHistory={() => setHistoryOpen(true)}>
-      
-      <HistoryDrawer 
+
+      <HistoryDrawer
         isOpen={historyOpen}
         onClose={() => setHistoryOpen(false)}
         history={history}
@@ -76,21 +77,21 @@ const App: React.FC = () => {
       {loading ? (
         <div className="flex flex-col items-center justify-center w-full h-screen">
           <div className="w-64 h-64 rounded-full border border-white/30 flex items-center justify-center animate-pulse relative">
-             <span className="font-serif text-3xl italic text-white animate-pulse">
-               Analyzing...
-             </span>
-             {/* Optional spinning ring for subtle activity */}
-             <div className="absolute inset-0 rounded-full border-t border-white animate-spin-slow"></div>
+            <span className="font-serif text-3xl italic text-white animate-pulse">
+              Analyzing...
+            </span>
+            {/* Optional spinning ring for subtle activity */}
+            <div className="absolute inset-0 rounded-full border-t border-white animate-spin-slow"></div>
           </div>
         </div>
       ) : view === 'HOME' ? (
         <>
-           {error && (
-             <div className="absolute top-24 text-center w-full font-mono text-xs text-red-400">
-               {error}
-             </div>
-           )}
-           <SearchHero onSearch={handleSearch} />
+          {error && (
+            <div className="absolute top-24 text-center w-full font-mono text-xs text-red-400">
+              {error}
+            </div>
+          )}
+          <SearchHero onSearch={handleSearch} />
         </>
       ) : (
         analysisData && <AnalysisDashboard data={analysisData} onSearchNew={handleSearch} />
