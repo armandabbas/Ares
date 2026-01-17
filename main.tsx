@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './index.css';
 
-console.log("Ares: Index.tsx reached");
+console.log("Ares: main.tsx reached");
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
